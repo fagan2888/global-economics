@@ -4,4 +4,4 @@ Using pdminer in Python 2 eliminates certain issues previously discovered when u
 
 This output is more consistent and robust, however, certain issues are stil experienced when working with files with horizontal tables
 
-Examples of output could be found in 'tag_converted_docs' floder
+Examples of output could be found in 'tag_converted_docs' folder
