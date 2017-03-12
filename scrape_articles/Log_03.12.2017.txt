@@ -1,0 +1,4 @@
+Query: http://www.imf.org/en/Publications/Search?title=Article+IV&when=After&year=2000
+Total Number of pages to scan: 180
+Total Number of documents found: 1793
+Time used for parsing: 1858.5992968600003 seconds
