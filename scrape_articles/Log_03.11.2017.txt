@@ -1,0 +1,4 @@
+Query: http://www.imf.org/en/Publications/Search?title=Article+IV&when=After&year=2011
+Total Number of pages to scan: 63
+Total Number of documents found: 628
+Time used for parsing: 326.0253072020132 seconds
