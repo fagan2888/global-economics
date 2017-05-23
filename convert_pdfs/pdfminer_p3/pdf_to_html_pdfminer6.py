@@ -7,8 +7,22 @@ import io
 import csv, re, os, sys
 from timeit import default_timer as timer
 import datetime as dt
+import multiprocessing
 
-def convert(case,pathin, fileHTML):
+def get_files(path1):
+    Files = []
+    for names in os.listdir(path1):
+        if names.endswith('.pdf'):
+            Files.append(names)
+    return Files
+
+def convert(i,doc_list,path1,path2):
+
+    filePDF = doc_list[i]
+    print("Working with doc: {}".format(filePDF))
+    fileHTML = filePDF.replace('pdf','html')
+    pathin = path1 + filePDF
+    pathout = path2 + fileHTML
 
     #Define parameters to the PDF device objet   
     manager = PDFResourceManager() 
@@ -19,20 +33,13 @@ def convert(case,pathin, fileHTML):
     password = ''
     maxpages = 0
 
-    if case == 'text' :
-        #Cast to StringIO Object
-        output = io.StringIO()
-        converter = TextConverter(manager, output, codec=codec, laparams=LAParams())
-
-    if case == 'HTML' :
-        #Cast to ByteIO Object for HTML or XML
-        output = io.BytesIO()
-        converter = HTMLConverter(manager, output, codec=codec, laparams=LAParams())
+    #Bytes IO used for XML and HTML conversions
+    output = io.BytesIO()
+    converter = HTMLConverter(manager, output, codec=codec, laparams=LAParams())
 
     #Create PDF interpreter object
     interpreter = PDFPageInterpreter(manager, converter)   
     infile = open(pathin, 'rb')
-
 
     #Process each page contained in the document
     for page in PDFPage.get_pages(infile, pagenos,caching=caching, check_extractable=True):
@@ -43,45 +50,28 @@ def convert(case,pathin, fileHTML):
     infile.close()
     converter.close()
     output.close()
-    
-    return convertedPDF
+
+    with open(pathout, "wb") as fileConverted:
+        fileConverted.write(convertedPDF)
+        fileConverted.close()
+
+    print("Done with file: {} numbered: {}".format(fileHTML,i))
+        
+    return
 
 if __name__ == "__main__":
-    path1 = "/Users/dariaulybina/Desktop/georgetown/global-economics/convert_pdfs/pdfminer_p3/" #pdf inputs directory
+    path1 = "/Users/dariaulybina/Desktop/georgetown/global-economics/scrape_articles/pdfs_downloaded/" #inputs directory
     path2 = "/Users/dariaulybina/Desktop/georgetown/global-economics/convert_pdfs/pdfminer_p3/" #outputs directory
 
-    #Read the list of documents to convert and make a list (make sure those documents exist in input directory)
-    #data = list(csv.DictReader(open("U:\\....\\doc_list.csv", "r", encoding="UTF-8", errors="ignore"))
-    #doc_list = []
-    #for row in data:
-        #doc = row['FILE'].strip()
-        #docs = doc + '.pdf'
-        #doc_list.append(docs)
+    doc_list = get_files(path1)
 
-    #Example file that works (example that doesn't -doc-_cr1606.pdf)
-    doc_list = ['-doc-cr1701.pdf']
+    for i in range(len(doc_list)-1):
+        p = multiprocessing.Process(target = convert, args=(i,doc_list,path1,path2,))
+        p.start()
+        p.join(180)
+        if p.is_alive():
+            p.terminate()
 
-    #Declare case to be converted to (#if you want txt - put 'text')
-    case = "HTML" 
-    for filePDF in doc_list:
-        print("Working with doc: {}".format(filePDF))
-        fileHTML = filePDF.replace('pdf','html')
-        pathin = path1 + filePDF
-        pathout = path2 + fileHTML
-
-        convertedPDF = convert(case, pathin, fileHTML)
-        with open(pathout, "wb") as fileConverted:
-            fileConverted.write(convertedPDF)
-            fileConverted.close()
-
-        #print(convertedPDF)
-        print("Done with file {}".format(fileHTML))
-
-        
-        
- 
-
-
-
-   
+#########Files that didn't convert(from terminal output)
+#########failed_list = ['-doc-cr1719.pdf',' -doc-cr1723.pdf']
        
