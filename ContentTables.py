@@ -1,12 +1,13 @@
 from bs4 import BeautifulSoup
-import re, csv
+import re, csv, os
 
 
 def getTable(filename):
-		with open('C:/Users/AYB/ConTable/{}.html'.format(filename), 'rb') as html:
+		with open('C:/Users/AYB/ProjPdf/HTMLs/{}'.format(filename), 'rb') as html:
 			soup = BeautifulSoup(html,"lxml")
 		test = soup(text=re.compile(r'.*_.[0-9]'))
-		f = open('{}.txt'.format(filename), 'w')
+		filename2 = filename.replace('html','txt')
+		f = open('C:/Users/AYB/ProjPdf/Tables/{}'.format(filename2), 'w')
 		for elem in test:
 			f.write(elem)
 			f.write('\n')
@@ -14,11 +15,23 @@ def getTable(filename):
 def rreplace(s,old,new,occurrence):
 	li = s.rsplit(old,occurrence)
 	return new.join(li)
-
+def get_Htmls(Loc):
+    Files = []
+    for names in os.listdir(Loc):
+        if names.endswith('.html'):
+            Files.append(names)
+    return Files
+def get_Txt(Loc):
+    Files = []
+    for names in os.listdir(Loc):
+        if names.endswith('.txt'):
+            Files.append(names)
+    return Files
 def txttocsv(filenames):	
-		F= open("{}.txt".format(filenames),'r')
+		F= open("C:/Users/AYB/ProjPdf/Tables/{}".format(filenames),'r')
 		C = F.readlines()
 		List=[]
+		filename2 = filenames.replace('txt','csv')
 		for con in C:
 			if not con in ['\n','\r\n']:
 				con = rreplace(con,"_",";",1)
@@ -26,18 +39,19 @@ def txttocsv(filenames):
 				CONT= {'topic': con.split(";")[0], 'page': con.split(";")[1].split("\n")[0]}
 				List.append(CONT)
 		fieldnames = ['topic','page']
-		CS = open('{}.csv'.format(filenames), 'w', newline='', encoding ='utf-8')
+		CS = open('C:/Users/AYB/ProjPdf/CsvTables/{}'.format(filename2), 'w', newline='', encoding ='utf-8')
 		writer = csv.DictWriter(CS, fieldnames = fieldnames)
 		writer.writeheader()
 		for T in List:
 			writer.writerow(T)
 		CS.close()
 def main():
-	DocList = ["-doc-cr1742","-doc-cr1750","-doc-cr1753"]
-	#for doc in DocList:
-		#getTable(doc)
-	for doc in DocList:
-		txttocsv(doc)
+	DocList = get_Htmls("/Users/AYB/ProjPdf/HTMLs/")
+	DocList2 = get_Txt("/Users/AYB/ProjPdf/Tables/")
+	for doc in DocList: 
+		getTable(doc)
+	for doc2 in DocList2:
+		txttocsv(doc2)
 if __name__ == '__main__':
 	main()
 
