@@ -13,7 +13,7 @@ def get_files(path1):
     Files = []
     for names in os.listdir(path1):
         if names.endswith('.pdf'): #later add those that end with .PDF
-            if names not in redund:
+            #if names not in redund:
                 Files.append(names)
     return Files
 
