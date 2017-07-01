@@ -10,11 +10,11 @@ def get_Txt(Loc):
     return Files
 
 def createJson():
-	DocList = get_Txt("/Users/AYB/ProjPdf/Tables/")
+	DocList = get_Txt("Tables of content repository path")
 	data = []
 	for doc in DocList:
 		List=[]
-		f = open("/Users/AYB/ProjPdf/Tables/{}".format(doc), 'r',encoding ='utf-8')
+		f = open("Tables of content repository path/{}".format(doc), 'r',encoding ='utf-8')
 		C = f.readlines()
 		for con in C:
 			if "APPRAISAL" in con:
@@ -25,7 +25,7 @@ def createJson():
 		key = doc.split(".txt")[0]
 		data.append({key : List})
 		json_data = json.dumps(data)
-	fil = open('C:/Users/AYB/ProjPdf/Json.txt','w')
+	fil = open('repository path/Json.txt','w')
 	fil.write(json_data)
 	fil.close
 def main():
